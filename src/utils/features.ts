@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { Product } from "../models/product.js";
+import { myCache } from "../app.js";
+import { InvaidatecacheProps } from "../types/types.js";
 export const DBConnect = () => {
   mongoose
     .connect(
@@ -13,4 +16,26 @@ export const DBConnect = () => {
     .catch((e) => {
       console.log(e);
     });
+};
+
+export const invalideCache = async ({
+  product,
+  order,
+  admin,
+}: InvaidatecacheProps) => {
+  if (product) {
+    const productKeys: string[] = [
+      "latest-products",
+      "categories",
+      "all-products",
+    ];
+
+    const products = await Product.find({}).select("_id");
+
+    products.forEach((p) => {
+      productKeys.push(`product-${p._id}`);
+    });
+
+    myCache.del(productKeys);
+  }
 };

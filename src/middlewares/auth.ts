@@ -12,6 +12,5 @@ export const adminOnly = TryCatch(async (req, res, next) => {
   if (!user) return next(new ErrorHandler("Saale Fake ID Deta Hai", 401));
   if (user.role !== "admin")
     return next(new ErrorHandler("Saale Aukat Nhi Hai Teri", 403));
-
   next();
 });

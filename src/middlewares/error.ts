@@ -7,8 +7,6 @@ export default function ErrorMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  console.log(err.message);
-  console.log(err.StatusCode);
   err.message ||= "Internal Server Error";
   err.StatusCode ||= 500;
   return res.status(err.StatusCode).json({
