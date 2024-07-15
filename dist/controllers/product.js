@@ -84,7 +84,7 @@ export const updateProduct = TryCatch(async (req, res, next) => {
     if (category)
         product.category = category;
     await product.save();
-    invalideCache({ product: true });
+    invalideCache({ product: true, productId: String(product._id) });
     return res.json({
         success: true,
         product,
@@ -99,7 +99,7 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
         console.log("Product photo deleted");
     });
     await product.deleteOne();
-    invalideCache({ product: true });
+    invalideCache({ product: true, productId: String(product._id) });
     return res.json({
         success: true,
         message: "Product deleted successfully",

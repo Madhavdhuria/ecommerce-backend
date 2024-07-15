@@ -1,19 +1,23 @@
-import { Request, Response, NextFunction } from "express";
-import Errorhandler from "../utils/utility-class.js";
+import { NextFunction, Request, Response } from "express";
+import ErrorHandler from "../utils/utility-class.js";
 import { ControllerType } from "../types/types.js";
-export default function ErrorMiddleware(
-  err: Errorhandler,
+
+export const ErrorMiddleware = (
+  err: ErrorHandler,
   req: Request,
   res: Response,
   next: NextFunction
-) {
+) => {
   err.message ||= "Internal Server Error";
   err.StatusCode ||= 500;
+
+  if (err.name === "CastError") err.message = "Invalid ID";
+
   return res.status(err.StatusCode).json({
     success: false,
     message: err.message,
   });
-}
+};
 
 export const TryCatch =
   (func: ControllerType) =>

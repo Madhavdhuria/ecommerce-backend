@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { Product } from "../models/product.js";
 import { myCache } from "../app.js";
-export const DBConnect = () => {
+export const DBConnect = (uri) => {
     mongoose
-        .connect("mongodb+srv://madhav:2003%40Mongo2024@cluster0.xaijqpg.mongodb.net/mystrymsg", {
+        .connect(uri, {
         dbName: "Ecommerce_24",
     })
         .then((c) => {
@@ -13,17 +13,39 @@ export const DBConnect = () => {
         console.log(e);
     });
 };
-export const invalideCache = async ({ product, order, admin, }) => {
+export const invalideCache = async ({ product, order, admin, userId, orderId, productId, }) => {
     if (product) {
         const productKeys = [
             "latest-products",
             "categories",
             "all-products",
         ];
-        const products = await Product.find({}).select("_id");
-        products.forEach((p) => {
-            productKeys.push(`product-${p._id}`);
-        });
+        if (typeof productId === "string") {
+            productKeys.push(`product-${productId}`);
+        }
+        if (typeof productId === "object") {
+            productId.forEach((i) => {
+                productKeys.push(`product-${i}`);
+            });
+        }
         myCache.del(productKeys);
+    }
+    if (order) {
+        const orderkeys = [
+            "all-orders",
+            `my-orders-${userId}`,
+            `order-${orderId}`,
+        ];
+        myCache.del(orderkeys);
+    }
+};
+export const reduceStock = async (orderItems) => {
+    for (let i = 0; i < orderItems.length; i++) {
+        const order = orderItems[i];
+        const product = await Product.findById(order.productId);
+        if (!product)
+            throw new Error("Product Not Found");
+        product.stock -= order.quantity;
+        await product.save();
     }
 };
