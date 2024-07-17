@@ -13,7 +13,7 @@ export const DBConnect = (uri) => {
         console.log(e);
     });
 };
-export const invalideCache = async ({ product, order, admin, userId, orderId, productId, }) => {
+export const invalideCache = ({ product, order, admin, userId, orderId, productId, }) => {
     if (product) {
         const productKeys = [
             "latest-products",
@@ -38,6 +38,14 @@ export const invalideCache = async ({ product, order, admin, userId, orderId, pr
         ];
         myCache.del(orderkeys);
     }
+    if (admin) {
+        myCache.del([
+            "admin-stats",
+            "admin-pie-charts",
+            "admin-bar-charts",
+            "admin-line-charts",
+        ]);
+    }
 };
 export const reduceStock = async (orderItems) => {
     for (let i = 0; i < orderItems.length; i++) {
@@ -54,6 +62,28 @@ export const CalculatePercentage = (thisMonth, lastMonth) => {
     if (lastMonth === 0)
         percent = thisMonth * 100;
     else
-        percent = ((thisMonth - lastMonth) / lastMonth) * 100;
+        percent = (thisMonth / lastMonth) * 100;
     return Number(percent.toFixed(0));
+};
+export const getInventories = async ({ categories, ProductCount, }) => {
+    const CategoryCountPromise = categories.map((category) => Product.countDocuments({ category }));
+    const CategoriesCount = await Promise.all(CategoryCountPromise);
+    const categoryCount = [];
+    categories.forEach((category, i) => {
+        categoryCount.push({
+            [category]: Math.round((CategoriesCount[i] / ProductCount) * 100),
+        });
+    });
+    return categoryCount;
+};
+export const getChartData = ({ length, docArr, today, property, }) => {
+    const data = new Array(length).fill(0);
+    docArr.forEach((i) => {
+        const creationDate = i.createdAt;
+        const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
+        if (monthDiff < length) {
+            data[length - monthDiff - 1] += property ? i[property] : 1;
+        }
+    });
+    return data;
 };
