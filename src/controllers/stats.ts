@@ -258,7 +258,7 @@ export const getPieCharts = TryCatch(async (req, res, next) => {
     );
 
     const productionCost = allOrders.reduce(
-      (prev, order) => prev + (order.shippingCharges || 0),
+      (prev, order) => prev + (order.ShippingCharges || 0),
       0
     );
 
