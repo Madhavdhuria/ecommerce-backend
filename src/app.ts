@@ -11,6 +11,7 @@ import { config } from "dotenv";
 import morgan from "morgan";
 import { ErrorMiddleware } from "./middlewares/error.js";
 import Stripe from "stripe";
+import cors from "cors"
 
 config({
   path: "./.env",
@@ -27,6 +28,7 @@ export const myCache = new NodeCache();
 export const stripe = new Stripe(StripeKey);
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cors());
 
 
 app.use("/uploads", express.static("uploads"));

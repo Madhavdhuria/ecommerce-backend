@@ -1,13 +1,14 @@
+import { rm } from "fs";
 import { TryCatch } from "../middlewares/error.js";
 import { Product } from "../models/product.js";
 import ErrorHandler from "../utils/utility-class.js";
-import { rm } from "fs";
 // import { faker } from "@faker-js/faker";
 import { myCache } from "../app.js";
 import { invalideCache } from "../utils/features.js";
 export const createProduct = TryCatch(async (req, res, next) => {
     const { category, name, price, stock } = req.body;
     const photo = req.file;
+    console.log(photo);
     if (!photo)
         return next(new ErrorHandler("Please upload a photo", 400));
     if (!category || !name || !price || !stock) {
@@ -83,10 +84,12 @@ export const updateProduct = TryCatch(async (req, res, next) => {
         product.price = price;
     if (category)
         product.category = category;
+    console.log(stock);
     await product.save();
     invalideCache({ product: true, productId: String(product._id), admin: true });
     return res.json({
         success: true,
+        message: "Product updates successfuly",
         product,
     });
 });

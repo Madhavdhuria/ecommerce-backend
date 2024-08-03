@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
+import { rm } from "fs";
 import { TryCatch } from "../middlewares/error.js";
+import { Product } from "../models/product.js";
 import {
   baseQuery,
   NewProductRequestBody,
   SearchRequestQuery,
 } from "../types/types.js";
-import { Product } from "../models/product.js";
 import ErrorHandler from "../utils/utility-class.js";
-import { rm } from "fs";
 // import { faker } from "@faker-js/faker";
 import { myCache } from "../app.js";
 import { invalideCache } from "../utils/features.js";
@@ -20,6 +20,7 @@ export const createProduct = TryCatch(
   ) => {
     const { category, name, price, stock } = req.body;
     const photo = req.file;
+    console.log(photo);
 
     if (!photo) return next(new ErrorHandler("Please upload a photo", 400));
     if (!category || !name || !price || !stock) {
@@ -37,7 +38,7 @@ export const createProduct = TryCatch(
       photo: photo.path,
     });
 
-    invalideCache({ product: true,admin:true });
+    invalideCache({ product: true, admin: true });
 
     return res.status(201).json({
       success: true,
@@ -55,7 +56,6 @@ export const getLatestProducts = TryCatch(async (req, res, next) => {
     products = await Product.find({}).sort({ createdAt: -1 }).limit(5);
     myCache.set("latest-products", JSON.stringify(products));
   }
-
   return res.json({
     success: true,
     products,
@@ -103,13 +103,15 @@ export const updateProduct = TryCatch(async (req, res, next) => {
   if (stock) product.stock = stock;
   if (price) product.price = price;
   if (category) product.category = category;
+  console.log(stock);
 
   await product.save();
 
-  invalideCache({ product: true, productId: String(product._id) ,admin:true});
+  invalideCache({ product: true, productId: String(product._id), admin: true });
 
   return res.json({
     success: true,
+    message: "Product updates successfuly",
     product,
   });
 });
@@ -124,7 +126,7 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
   });
   await product.deleteOne();
 
-  invalideCache({ product: true, productId: String(product._id) ,admin:true});
+  invalideCache({ product: true, productId: String(product._id), admin: true });
 
   return res.json({
     success: true,
@@ -163,7 +165,6 @@ export const getAllCategories = TryCatch(async (req, res, next) => {
     categories,
   });
 });
-
 export const getAllProducts = TryCatch(
   async (req: Request<{}, {}, {}, SearchRequestQuery>, res, next) => {
     const { search, price, category, sort } = req.query;
@@ -205,7 +206,6 @@ export const getAllProducts = TryCatch(
     });
   }
 );
-
 // const generateRandomProducts = async (count: number = 10) => {
 //   const products = [];
 

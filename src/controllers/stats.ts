@@ -372,6 +372,10 @@ export const getbarCharts = TryCatch(async (req, res, next) => {
 
     myCache.set(key, JSON.stringify(charts));
   }
+  return res.status(200).json({
+    success: true,
+    charts,
+  });
 });
 
 export const getLineCharts = TryCatch(async (req, res, next) => {
