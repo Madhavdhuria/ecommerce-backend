@@ -39,7 +39,7 @@ const schema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    shippingCharges: {
+    ShippingCharges: {
       type: Number,
       required: true,
     },

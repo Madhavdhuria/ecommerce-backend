@@ -69,7 +69,7 @@ export interface NewOrderRequestBody {
   user: string;
   subtotal: number;
   tax: number;
-  shippingCharges: number;
+  ShippingCharges: number;
   discount: number;
   total: number;
   orderItems: OrderItemType[];

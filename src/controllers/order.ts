@@ -8,17 +8,20 @@ import { myCache } from "../app.js";
 
 export const newOrder = TryCatch(
   async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
+    console.log(req.body);
     const {
       shippingInfo,
       discount,
       orderItems,
-      shippingCharges,
+      ShippingCharges,
       subtotal,
       tax,
       total,
       user,
     } = req.body;
-
+    
+    
+    
     if (!shippingInfo || !orderItems || !user || !subtotal || !tax || !total)
       return next(new Errorhandler("Please Enter All Fields", 400));
 
@@ -26,7 +29,7 @@ export const newOrder = TryCatch(
       shippingInfo,
       discount,
       orderItems,
-      shippingCharges,
+      ShippingCharges,
       subtotal,
       tax,
       total,

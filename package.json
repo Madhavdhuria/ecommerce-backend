@@ -10,7 +10,7 @@
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js"
   },
-  "keywords": [],
+  "keywords": [], 
   "author": "",
   "license": "ISC",
   "description": "",
